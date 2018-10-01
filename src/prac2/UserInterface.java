@@ -6,7 +6,7 @@ import java.util.Scanner;
 /**
  * Отвечает за взаимодействие с пользователем. Также обрабатывает все исключительные ситуации,
  * возникающие в процессе работы программы.
- * @version 0.1 30.09.2018
+ * @version 1.0.0 01.10.2018.
  */
 final class UserInterface {
 
@@ -34,19 +34,25 @@ final class UserInterface {
                     case "clear":
                         testList = new MyList<>();
                         break;
+                    case "next":
+                        System.out.println(testList.next());
+                        break;
+                    case "remove":
+                        System.out.println("Удалено значение: " + testList.remove());
+                        break;
+                    case "peek":
+                        System.out.println(testList.peek());
+                        break;
                     case "exit":
                         return;
                     default:
                         System.out.println("Не удалось распознать команду или ее часть");
                 }
             }
-            catch (IndexOutOfBoundsException e) {
-                System.err.println("Недостаточно аргументов для данной команды");
-            }
             catch (NumberFormatException e) {
                 System.err.println("Не удалось распознать аргумент команды");
             }
-            catch (IllegalArgumentException e) {
+            catch (IllegalArgumentException | IllegalStateException e) {
                 System.err.println(e.getMessage());
             }
         }

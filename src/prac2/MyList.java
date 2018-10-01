@@ -5,7 +5,7 @@ import java.util.Optional;
 /**
  * Реализует односвязный циклический список.
  * @param <V> обозначает тип содержимого ячейки списка.
- * @version 0.1 30.09.2018.
+ * @version 1.0.0 01.10.2018.
  */
 public class MyList<V> {
 
@@ -16,7 +16,7 @@ public class MyList<V> {
 
 
     private Cell current;
-    private int size;    //TODO: внимательно с этой хренью
+    private int size;
 
     /*
     Список будет содержать две ячейки-болванки, содержащие null. Эти две ячейки представляют собой
@@ -50,7 +50,18 @@ public class MyList<V> {
         return string.toString();
     }
 
-    public int getSize() { return size; }
+    /*
+    Почти все методы не имеют смысла в случае, когда список пуст, поэтому проверка вынесена в
+    отдальный метод, ведь во всех случаях надо бросить одно и то же исключение с тем же сообщением.
+     */
+    private void checkIfEmpty() throws IllegalStateException {
+        if (this.size == 0) throw new IllegalStateException("Список пуст");
+    }
+
+    public V peek() throws IllegalStateException {
+        this.checkIfEmpty();
+        return this.current.value;
+    }
 
     /*
     Вставить новую ячейку между текущей (this.current) и следующей (this.current.next).
@@ -58,14 +69,14 @@ public class MyList<V> {
      */
     public void insert(V value) throws IllegalArgumentException {
         if (value == null)  throw new IllegalArgumentException("Хранение null недопустимо");
-        Cell cell1 = this.current;
-        Cell cell2 = this.current.next;
+        Cell leftCell = this.current;
+        Cell rightCell = this.current.next;
 
         this.current = new Cell();
-        this.current.next = cell2;
+        this.current.next = rightCell;
         this.current.value = value;
-        cell1.next = this.current;
-        if (!(cell1.value == null)) current = cell1;
+        leftCell.next = this.current;
+        if (!(leftCell.value == null)) current = leftCell;
         size++;
     }
 
@@ -74,27 +85,42 @@ public class MyList<V> {
     Перешагивает через ячейки-болванки, не считая их.
      */
     public void advance(int steps) throws IllegalArgumentException, IllegalStateException {
-        if (this.size == 0)  throw new IllegalStateException("Список пуст");
+        this.checkIfEmpty();
         if (this.size == 1)  return;
         if (steps <= 0) {
             throw new IllegalArgumentException("Число шагов должно быть больше нуля");
         }
         steps = steps % this.size;
 
-        for (int i = 0; i != steps; ++i) {    //TODO: продумать.затестить
+        for (int i = 0; i != steps; ++i) {
             this.current = this.current.next;
             if (current.value == null)  i--;
         }
     }
 
     /*
-    Возвращает значение текущей ячейки и делает текущей следующую. Если список пуст, то возвращает
-    null. Именно поэтому используется Optional.
-    TODO: нарушает инвариант, выставляя current на болванки
+    Вернуть значение текущей ячейки и сделать текущей следующую. Если список пуст, то вернуть null.
+    Именно поэтому используется Optional.
      */
-    public Optional<V> next() {
-        Optional<V> result = Optional.of(this.current.value);
-        this.current = this.current.next;
-        return result;
+    public V next() throws IllegalStateException {
+        this.checkIfEmpty();
+        V valueToReturn = this.current.value;
+
+        this.advance(1);
+        return valueToReturn;
+    }
+
+    /*
+    Удалить текущую ячейку (current) и сделать текущей предыдущую относительно нее.
+     */
+    public V remove() throws IllegalStateException {
+        this.checkIfEmpty();
+        V valueToReturn = this.current.value;
+        Cell rightCell = this.current.next;
+
+        this.advance(this.size -1);
+        this.current.next = rightCell;
+        size--;
+        return valueToReturn;
     }
 }
