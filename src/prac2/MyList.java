@@ -1,11 +1,10 @@
 package prac2;
 
-import java.util.Optional;
 
 /**
  * Реализует односвязный циклический список.
  * @param <V> обозначает тип содержимого ячейки списка.
- * @version 1.0.0 01.10.2018.
+ * @version 1.0.1 01.10.2018.
  */
 public class MyList<V> {
 
@@ -52,7 +51,7 @@ public class MyList<V> {
 
     /*
     Почти все методы не имеют смысла в случае, когда список пуст, поэтому проверка вынесена в
-    отдальный метод, ведь во всех случаях надо бросить одно и то же исключение с тем же сообщением.
+    отдельный метод, ведь во всех случаях надо бросить одно и то же исключение с тем же сообщением.
      */
     private void checkIfEmpty() throws IllegalStateException {
         if (this.size == 0) throw new IllegalStateException("Список пуст");
@@ -82,7 +81,7 @@ public class MyList<V> {
 
     /*
     Выбрать новую ячейку, относительно которой будут осуществляться операции над элементами списка.
-    Перешагивает через ячейки-болванки, не считая их.
+    Перешагивает через ячейки-болванки, не учитывая их.
      */
     public void advance(int steps) throws IllegalArgumentException, IllegalStateException {
         this.checkIfEmpty();
@@ -99,8 +98,7 @@ public class MyList<V> {
     }
 
     /*
-    Вернуть значение текущей ячейки и сделать текущей следующую. Если список пуст, то вернуть null.
-    Именно поэтому используется Optional.
+    Вернуть значение текущей ячейки и сделать текущей следующую.
      */
     public V next() throws IllegalStateException {
         this.checkIfEmpty();
